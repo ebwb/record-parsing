@@ -1,0 +1,13 @@
+#
+# This is a comment line. Ignore all lines that begin with the '#' character.
+# Blank lines should be omitted.
+#
+# Column Names separated by a single comma:
+# LastName,FirstName,Email,FavoriteColor,DateOfBirth
+#
+
+Tirekicker,Ruth,ruth.tirekicker@yopmail.com,black,2/7/1984
+Homeowner,John,john.homeowner@yopmail.com,white,1/1/1980
+Purchaser,Patrick,patrick.purchaser@yopmail.com,green,11/19/1941
+Homebuyer,Liz,liz.homebuyer@yopmail.com,yellow,1/2/1982
+America,Andy,andy.america@yopmail.com,blue,2/2/1981

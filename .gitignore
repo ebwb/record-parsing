@@ -12,3 +12,13 @@ pom.xml.asc
 .lein-failures
 .nrepl-port
 .cpcache/
+
+# emacs files
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
