@@ -13,6 +13,8 @@
 
   :main record-parsing.core
 
+  :aot :all
+
   :repl-options {:init-ns record-parsing.core}
 
   :profiles {:test [{:resource-paths ["test/resources"]}]}
