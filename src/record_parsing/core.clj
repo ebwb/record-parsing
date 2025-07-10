@@ -30,6 +30,8 @@
     
     (apply merge (map parse-fn (partition 2 opts)))))
 
+;; TODO(ebwb): keep default sort of last-name-desc
+
 (defn validate-input
   [filepath]
   
@@ -45,21 +47,21 @@
       (= 0 (.length file))
       (exit-with-err ""))))
 
-(defn -main
-  [& args]
+;; (defn -main
+;;   [& args]
 
-  (let [filepath (first args)
-        opts (rest args)
-        options (parse-opts opts)
-        default-sort (get sorts/sorts "last-name-desc")]
+;;   (let [filepath (first args)
+;;         opts (rest args)
+;;         options (parse-opts opts)
+;;         default-sort (get sorts/sorts "last-name-desc")]
     
-    ;; check file attributes before proceeding
-    (validate-input filepath)
+;;     ;; check file attributes before proceeding
+;;     (validate-input filepath)
     
-    (with-open [r (io/reader filepath)]
-      ;; processing is wrapped around doall so file is processed
-      ;; before we close the stream, but still allow for a lazy seq to
-      ;; be passed around in case of a larger file.
-      (doall
-       (map #(println (p/record->display %))
-            (p/process-data (line-seq r) (:sort options default-sort)))))))
+;;     (with-open [r (io/reader filepath)]
+;;       ;; processing is wrapped around doall so file is processed
+;;       ;; before we close the stream, but still allow for a lazy seq to
+;;       ;; be passed around in case of a larger file.
+;;       (doall
+;;        (map #(println (p/record->display %))
+;;             (p/process-data (line-seq r) (:sort options default-sort)))))))
