@@ -4,8 +4,7 @@
             [clojure.string :as s]
             [clojure.tools.logging :as log]
             [clojure.data.json :as json]
-            [record-parsing.process :as p]
-            [record-parsing.sort :as sort])
+            [record-parsing.process :as p])
   (:import [java.io ByteArrayInputStream InputStreamReader BufferedReader]))
 
 (defn json-response
@@ -14,12 +13,23 @@
    :headers {"Content-Type" "application/json"}
    :body (json/write-str data)})
 
+(defn require-text-plain
+  "Middleware that ensures the request has `text/plain` Content-Type"
+  [handler]
+  (fn [req]
+    (let [content-type (get-in req [:headers "content-type"])]
+      (if (= content-type "text/plain")
+        (handler req)
+        {:status 415
+         :headers {"Content-Type" "application/json"}
+         :body (json/write-str {:error "Unsupported Content-Type. Expected text/plain."})}))))
 
 (def router
   (ring/ring-handler
    (ring/router
     [["/records"
-      {:post (fn [_] (json-response []))}]
+      {:post {:middleware [require-text-plain]
+              :handler (fn [_] (json-response []))}}]
      ["/records/color"
       {:get (fn [_] (json-response []))}]
      ["/records/birthdate"

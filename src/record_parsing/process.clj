@@ -29,19 +29,12 @@
     (let [most-common-char (key (first sorted))]
       (some (fn [[k ch]] (when (= ch most-common-char) k)) delimiters))))
 
+;; TODO(ebwb): should have some validation of some sort, most likely,
+;; but it won't be this
 (defn valid-line?
   [line]
   (and (not (s/blank? line))
        (not (s/starts-with? line "#"))))
-
-(defn record->display
-  [r]
-  (s/join ", "
-          [(:last-name r)
-           (:first-name r)
-           (:email r)
-           (:favorite-color r)
-           (str (.format (:dob r) datetime-fmt))]))
 
 (defn ->record
   "Parse data into a record."
@@ -60,6 +53,8 @@
       (s/split pattern)
       ->record))
 
+;; TODO(ebwb): would be nice to keep this open to accepting a list of
+;; inputs, splitting on new lines, maybe
 (defn process-data
   "Process input file's valid lines into output."
   [lines sort-fn]
