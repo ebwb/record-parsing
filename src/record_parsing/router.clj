@@ -4,14 +4,21 @@
             [clojure.string :as s]
             [clojure.tools.logging :as log]
             [clojure.data.json :as json]
-            [record-parsing.process :as p])
+            [record-parsing.process :as p]
+            [record-parsing.sort :as sorts])
   (:import [java.io ByteArrayInputStream InputStreamReader BufferedReader]))
 
-(defn json-response
-  [data & [status]]
-  {:status (or status 200)
-   :headers {"Content-Type" "application/json"}
-   :body (json/write-str data)})
+(defn wrap-json-response
+  [handler]
+  (fn [request]
+    (let [resp (handler request)]
+      (if (and (map? resp)
+               (contains? resp :status)
+               (contains? resp :body))
+        resp
+        {:status 200
+         :headers {"Content-Type" "application/json"}
+         :body (json/write-str resp)}))))
 
 (defn require-text-plain
   "Middleware that ensures the request has `text/plain` Content-Type"
@@ -27,13 +34,15 @@
 (def router
   (ring/ring-handler
    (ring/router
-    [["/records"
+    ["" {:middleware [wrap-json-response]}
+     ["/records"
       {:post {:middleware [require-text-plain]
-              :handler (fn [_] (json-response []))}}]
+              :handler (fn [_] [{:foo "records"}])}}]
      ["/records/color"
-      {:get (fn [_] (json-response []))}]
+      {:get (fn [_] [{:foo "color"}])}]
      ["/records/birthdate"
-      {:get (fn [_] (json-response []))}]
+      {:get (fn [_] [{:foo "birthdate"}])}]
      ["/records/name"
-      {:get (fn [_] (json-response []))}]])
+      {:get {:handler (fn [_] [{:foo "name"}])}}]]
+    )
    (ring/create-default-handler)))
