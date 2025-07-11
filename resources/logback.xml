@@ -1,0 +1,6 @@
+<configuration>
+
+  <logger name="org.eclipse" level="WARN"/>
+  <logger name="record-parsing" level="INFO"/>
+
+</configuration>
