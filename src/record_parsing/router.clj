@@ -1,12 +1,8 @@
 (ns record-parsing.router
   (:require [reitit.ring :as ring]
-            [reitit.ring.middleware.parameters :as parameters]
-            [clojure.string :as s]
-            [clojure.tools.logging :as log]
             [clojure.data.json :as json]
             [record-parsing.process :as p]
-            [record-parsing.sort :as sorts])
-  (:import [java.io ByteArrayInputStream InputStreamReader BufferedReader]))
+            [record-parsing.sort :as sorts]))
 
 (defn wrap-json-response
   "Middleware for turning body into JSON. Endpoints may return either

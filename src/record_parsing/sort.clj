@@ -27,8 +27,3 @@
                             (clean (:last-name b))))))]
 
     (sort comp-fn records)))
-
-(def sorts
-  {"last-name-desc" sort->last-name-desc
-   "birth-date-asc" sort->birth-date-asc
-   "color-asc-last-name-asc" sort->color-asc-last-name-asc})
