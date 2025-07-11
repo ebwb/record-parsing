@@ -1,24 +1,3 @@
-* Why the homework?
-Welcome! For engineering candidates, we want to see a sample of their
-code. It also helps to have a more productive conversation during the
-interview. Thank you for putting your time and energy into this!
-
-* The homework
-This assignment is designed to be completed on your own time. If you
-have any clarification questions, please ask. Submit the project once
-fully completed.
-
-The work will determine whether we bring you in for an
-interview. Treat this assignment as you would any work assignment that
-would result in code being put into production. We encourage you to
-put your best foot forward!
-
-* Rules and Guidelines
-- We will be looking at the readability and cleanliness of your code.
-- Provide unit tests. The cleanliness and readability of tests is just
-  as important as your production code.
-- Make a github repository making commits how you would normally.
-
 * Step 1 - Build a system to parse and sort a set of records
 Create a command line app that takes a single input, the name of a
 file containing a set of records in one of the three formats: comma
@@ -58,12 +37,3 @@ It's your choice how you render the output from these endpoints as
 long as it is well-structured JSON data.
 
 Don't worry about using a persistent datastore.
-
-** Step 3 - Review and Refactor
-In the next interview we will sit down with you and walk through your
-solution together. Be ready to explain any tradeoffs you made in your
-solution. We will also use your solution as an opportunity to pair
-program by asking you to modify or extend it in some way.
-
-Please have your development environment ready for the interview.
-
