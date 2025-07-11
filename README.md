@@ -1,58 +1,37 @@
 # record-parsing
 
-A small utility app for parsing records in a variety of formats. All
-records from the specified input file will be printed to stdout,
-sorted according to the sort specified. If no sort is specified,
-records will be sorted by last name, descending.
+A small server application for parsing records in a variety of formats
+with local, in-memory storage. Records may be requested in a number of
+different sorts, described below.
 
-## Input Format
+## API
 
-Files are expected to adhere to a specified format:
-1. Last name
-2. First name
-3. Email
-4. Favorite color
-5. Date of Birth (expected in M/d/YYYY format)
-
-Input files may contain comments. All comment lines must begin with a
-`#` character. Blank lines are allowed, but skipped.
-
-### Sample Input
-
-The following is an example of an input file:
-```
-# This is a comment line. It will be skipped. The next line is
-# blank, and will also be skipped. Normal input follows.
-
-Tirekicker,Ruth,ruth.tirekicker@yopmail.com,black,2/7/1984
-Homeowner,John,john.homeowner@yopmail.com,white,1/1/1980
-```
-
-## Runtime Options
-
-| Option name | Details                                                                                                 |
-|:------------|---------------------------------------------------------------------------------------------------------|
-| `sort`      | Various sort options supported. Includes: `last-name-desc`, `birth-date-asc`, `color-asc-last-name-asc` |
-
+Supported endpoints include:
+- `POST /records` - Adds the record to the in-memory data store,
+  returning a 201 if successful.
+- `GET /records/name` - Returns all stored records sorted by
+  `last-name`, descending.
+- `GET /records/birthdate` - Returns all stored records sorted by
+  `birthdate`, ascending.
+- `GET /records/name` - Returns all stored records sorted by favorite
+  color, ascending, then by last name ascending.
 
 ## Running Locally
 
-Intended as a command line tool, this tool can be run at your
-terminal.
+As an RESTful HTTP server, this can be run locally rather simply with
+`lein uberjar`.
 
-Installation:
+From there, one may add records using the `POST /records` endpoint:
 ```
-lein uberjar
-```
-
-Usage: `<java run command> <path to file> [--sort <name of sort>]`
-
-Run the app, assuming `project.clj` version of 0.0.0:
-```
-java -jar target/record-parsing-0.0.0-standalone.jar resources/comma-delimited.txt
+curl -X POST localhost:3000/records \
+    -H "Content-Type: text/plain" \
+	-d "Bernard,Evan,ebwbernard@gmail.com,green,11/2/1992"
 ```
 
-Run the app again with the same version, this time using a `--sort` of `last-name-desc`:
-```
-java -jar target/record-parsing-0.0.0-standalone.jar resources/comma-delimited.txt --sort last-name-desc
-```
+## Out of Scope
+
+The following updates may be considered in the future, but are
+non-goals at this time:
+- Authentication/authorization
+- Persistent data stores
+- Containerization

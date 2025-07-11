@@ -18,7 +18,7 @@
                                 (mock/header "Content-Type" "text/plain")
                                 (mock/body "Foo|Bar|bar.foo@example.com|blue|2/14/1992")))
             body (json/read-str (:body res) {:key-fn keyword})]
-        (is (= 200 (:status res)))
+        (is (= 201 (:status res)))
         (is (= "application/json" (get-in res [:headers "Content-Type"])))
         (is (= {:last-name "Foo"
                 :first-name "Bar"

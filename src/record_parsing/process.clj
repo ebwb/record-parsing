@@ -108,7 +108,8 @@
   (let [record (process-record (vector (slurp body)))]
     (if record
       (do (db/add-> record)
-          (serialize-dates record))
+          {:status 201
+           :body (serialize-dates record)})
       {:status 400 :error "Bad request"})))
 
 (defn handle-get-records

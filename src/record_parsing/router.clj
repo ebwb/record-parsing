@@ -9,13 +9,19 @@
   (:import [java.io ByteArrayInputStream InputStreamReader BufferedReader]))
 
 (defn wrap-json-response
+  "Middleware for turning body into JSON. Endpoints may return either
+  data to be serialized or a map containing the intended `:status` and
+  `:body` to be serialized."
   [handler]
   (fn [request]
     (let [resp (handler request)]
+      (println "resp: " resp)
       (if (and (map? resp)
                (contains? resp :status)
                (contains? resp :body))
-        resp
+        (assoc resp
+               :body (json/write-str (:body resp))
+               :headers {"Content-Type" "application/json"})
         {:status 200
          :headers {"Content-Type" "application/json"}
          :body (json/write-str resp)}))))
@@ -29,7 +35,7 @@
         (handler req)
         {:status 415
          :headers {"Content-Type" "application/json"}
-         :body (json/write-str {:error "Unsupported Content-Type. Expected text/plain."})}))))
+         :body {:error "Unsupported Content-Type. Expected text/plain."}}))))
 
 (def router
   (ring/ring-handler
