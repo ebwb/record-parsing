@@ -13,7 +13,7 @@
 	      {:last-name "mmm"}
 	      {:last-name "aab"}
 	      {:last-name "aaa"}]
-             (sut/sort->last-name-desc input)))))
+             (sut/by-last-name-desc input)))))
   
   (testing "test birth-date-asc sort"
     (let [d->str #(LocalDate/parse %)
@@ -25,7 +25,7 @@
               {:dob (d->str "2000-01-02")}
               {:dob (d->str "2005-06-30")}
               {:dob (d->str "2010-01-01")}]
-             (sut/sort->birth-date-asc input)))))
+             (sut/by-birth-date-asc input)))))
 
   (testing "test color-asc-last-name-asc"
     (let [input [{:favorite-color "green" :last-name "SameAsOtherBBB"}
@@ -37,5 +37,5 @@
               {:favorite-color "green" :last-name "SameAsOtherBBB"}
               {:favorite-color "green" :last-name "SameAsOtherAAA"}
               {:favorite-color "orange" :last-name "OnlyOrange"}]
-             (sut/sort->color-asc-last-name-asc input))))))
+             (sut/by-color-asc-last-name-asc input))))))
 

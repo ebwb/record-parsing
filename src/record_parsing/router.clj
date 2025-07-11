@@ -4,6 +4,8 @@
             [record-parsing.process :as p]
             [record-parsing.sort :as sorts]))
 
+;; On the next middleware addition, it will likely be time to abstract
+;; these into their own namespace
 (defn wrap-json-response
   "Middleware for turning body into JSON. Endpoints may return either
   data to be serialized or a map containing the intended `:status` and
@@ -41,9 +43,9 @@
        {:post {:middleware [require-text-plain]
                :handler p/handle-add-record}}]
       ["/records/color"
-       {:get (partial #'p/handle-get-records sorts/sort->color-asc-last-name-asc)}]
+       {:get (partial #'p/handle-get-records sorts/by-color-asc-last-name-asc)}]
        ["/records/birthdate"
-        {:get (partial #'p/handle-get-records sorts/sort->birth-date-asc)}]
+        {:get (partial #'p/handle-get-records sorts/by-birth-date-asc)}]
       ["/records/name"
-       {:get (partial #'p/handle-get-records sorts/sort->last-name-desc)}]]])
+       {:get (partial #'p/handle-get-records sorts/by-last-name-desc)}]]])
    (ring/create-default-handler)))

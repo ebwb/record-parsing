@@ -34,7 +34,15 @@
         (is (= 415 (:status res)))
         (is (= "application/json" (get-in res [:headers "Content-Type"])))
         (is (= {:error "Unsupported Content-Type. Expected text/plain."}
-               body))))))
+               body))))
+    (testing "POST /records with empty content type returns 400"
+      (let [res (sut/router (-> (mock/request :post "/records")
+                                (mock/header "Content-Type" "text/plain")
+                                (mock/body "")))
+            body (json/read-str (:body res) {:key-fn keyword})]
+        (is (= 400 (:status res)))
+        (is (= "application/json" (get-in res [:headers "Content-Type"])))
+        (is (= "Bad request" body))))))
 
 (deftest get-records-test
   (with-redefs [db/get-records (constantly [record])]

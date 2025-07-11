@@ -14,9 +14,7 @@
                  ; http server support
                  [metosin/reitit "0.7.0-alpha7"]
                  [ring/ring-jetty-adapter "1.11.0"]
-                 [org.clojure/data.json "2.5.1"]
-                 [ring/ring-mock "0.4.0"]  ;;TODO(ebwb): should be possible to put this in test profile
-                 ]
+                 [org.clojure/data.json "2.5.1"]]
 
   :main record-parsing.main
 
@@ -25,5 +23,5 @@
   :repl-options {:init-ns record-parsing.main}
 
   :profiles {:test [{:resource-paths ["test/resources"]
-                     :dependencies []}]}
+                     :dependencies [[ring/ring-mock "0.4.0"]]}]}
 )
