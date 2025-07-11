@@ -30,61 +30,33 @@
     (let [most-common-char (key (first sorted))]
       (some (fn [[k ch]] (when (= ch most-common-char) k)) delimiters))))
 
-;; TODO(ebwb): should have some validation of some sort, most likely,
-;; but it won't be this
-(defn valid-line?
-  [line]
-  (and (not (s/blank? line))
-       (not (s/starts-with? line "#"))))
-
 (defn ->record
   "Parse data into a record."
   [data]
-  {:last-name (nth data 0)
-   :first-name (nth data 1)
-   :email (nth data 2)
-   :favorite-color (nth data 3)
-   :dob (LocalDate/parse (nth data 4) datetime-fmt)})
+  (try
+    {:last-name (nth data 0)
+     :first-name (nth data 1)
+     :email (nth data 2)
+     :favorite-color (nth data 3)
+     :dob (LocalDate/parse (nth data 4) datetime-fmt)}
+    (catch Exception e
+      (log/error e)
+      nil)))
 
-(defn parse
-  "Parse a line of data into a record. Assumes that pattern has been
-  correctly identified for the given data."
-  [pattern data]
-  (-> data
-      (s/split pattern)
-      ->record))
-
-;; TODO(ebwb): would be nice to keep this open to accepting a list of
-;; inputs, splitting on new lines, maybe
-(defn process-data
-  "Process input file's valid lines into output."
-  [lines sort-fn]
-  ;; drop noise lines
-  (let [data (filter valid-line? lines)
-        delimiter (detect-delimiter (first data))
-        split-pattern (->> delimiter
-                           (get delimiters)
-                           (str "\\")
-                           (re-pattern))]
-    (log/debug "Delimiter used is" (name delimiter))
-
-    ;; parse and display data
-    (->> data
-         (map (partial parse split-pattern))
-         (sort-fn))))
-
-(defn process-record
+(defn parse-record
   [line]
-  (let [data (filter valid-line? line)
-        delimiter (detect-delimiter (first data))
-        split-pattern (->> delimiter
-                           (get delimiters)
-                           (str "\\")
-                           (re-pattern))]
-    (log/debug "Delimiter used is" (name delimiter))
+  (try
+    (let [delimiter (detect-delimiter line)
+          split-pattern (->> delimiter
+                             (get delimiters)
+                             (str "\\")
+                             (re-pattern))]
 
-    (->> (first data)
-         (parse split-pattern))))
+      (log/debug "Delimiter used is" (name delimiter))
+      (->record (s/split line split-pattern)))
+    (catch Exception e
+      (log/error e)
+      nil)))
 
 (defn serialize-dates
   "Serialize `java.time.LocalDate` fields into strings for JSON
@@ -101,18 +73,17 @@
       :else
       [])))
   
-;; TODO(ebwb): input validation?
 (defn handle-add-record
+  "Parse and add the record to the data store."
   [{:keys [body]}]
-  ;; TODO(ebwb): get rid of the call to vec
-  (let [record (process-record (vector (slurp body)))]
+  (let [record (parse-record (slurp body))]
     (if record
       (do (db/add-> record)
-          {:status 201
-           :body (serialize-dates record)})
-      {:status 400 :error "Bad request"})))
+          {:status 201 :body (serialize-dates record)})
+      {:status 400 :body "Bad request"})))
 
 (defn handle-get-records
+  "Fetch and sort all records based on the given sort-fn."
   [sort-fn _]
   (->> (db/get-records)
        sort-fn

@@ -15,7 +15,6 @@
   [handler]
   (fn [request]
     (let [resp (handler request)]
-      (println "resp: " resp)
       (if (and (map? resp)
                (contains? resp :status)
                (contains? resp :body))
