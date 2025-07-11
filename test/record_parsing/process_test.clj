@@ -53,11 +53,6 @@
       (catch Exception e
         (is java.lang.IndexOutOfBoundsException (type e))))))
 
-(def comma-separated (-> "comma-delimited.txt"
-                         io/resource
-                         slurp
-                         s/split-lines))
-
 (deftest test-parse
   (testing "full parse test"
     (let [input "America,Andy,andy.america@yopmail.com,blue,2/2/1981"
@@ -69,13 +64,13 @@
 	      :dob (LocalDate/parse "1981-02-02")}
              result)))))
 
-(deftest test-record->display
-  (testing "asserting format of record->display"
+(deftest test-serialize-dates
+  (testing "asserting format of serialize-dates"
     (let [input {:last-name "America"
                  :first-name "Andy"
 	         :email "andy.america@yopmail.com"
 	         :favorite-color "blue"
 	         :dob (LocalDate/parse "1981-03-30")}
-          result (sut/record->display input)]
-      (is (= "America, Andy, andy.america@yopmail.com, blue, 3/30/1981"
+          result (sut/serialize-dates input)]
+      (is (= (assoc input :dob "3/30/1981")
              result)))))

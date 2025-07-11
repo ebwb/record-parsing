@@ -1,6 +1,7 @@
 (ns record-parsing.process
   (:require [clojure.string :as s]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [record-parsing.state :as db])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter]))
 
@@ -71,3 +72,47 @@
     (->> data
          (map (partial parse split-pattern))
          (sort-fn))))
+
+(defn process-record
+  [line]
+  (let [data (filter valid-line? line)
+        delimiter (detect-delimiter (first data))
+        split-pattern (->> delimiter
+                           (get delimiters)
+                           (str "\\")
+                           (re-pattern))]
+    (log/debug "Delimiter used is" (name delimiter))
+
+    (->> (first data)
+         (parse split-pattern))))
+
+(defn serialize-dates
+  "Serialize `java.time.LocalDate` fields into strings for JSON
+  serialization."
+  [records]
+  (let [fmt-fn (fn [date] (str (.format date datetime-fmt)))]
+    (cond
+      (map? records)
+      (update records :dob fmt-fn)
+
+      (seq? records)
+      (map #(update % :dob fmt-fn) records)
+
+      :else
+      [])))
+  
+;; TODO(ebwb): input validation?
+(defn handle-add-record
+  [{:keys [body]}]
+  ;; TODO(ebwb): get rid of the call to vec
+  (let [record (process-record (vector (slurp body)))]
+    (if record
+      (do (db/add-> record)
+          (serialize-dates record))
+      {:status 400 :error "Bad request"})))
+
+(defn handle-get-records
+  [sort-fn _]
+  (->> (db/get-records)
+       sort-fn
+       serialize-dates))

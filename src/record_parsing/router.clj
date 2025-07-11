@@ -34,15 +34,15 @@
 (def router
   (ring/ring-handler
    (ring/router
-    ["" {:middleware [wrap-json-response]}
-     ["/records"
-      {:post {:middleware [require-text-plain]
-              :handler (fn [_] [{:foo "records"}])}}]
-     ["/records/color"
-      {:get (fn [_] [{:foo "color"}])}]
-     ["/records/birthdate"
-      {:get (fn [_] [{:foo "birthdate"}])}]
-     ["/records/name"
-      {:get {:handler (fn [_] [{:foo "name"}])}}]]
-    )
+    [
+     ["" {:middleware [wrap-json-response]}
+      ["/records"
+       {:post {:middleware [require-text-plain]
+               :handler p/handle-add-record}}]
+      ["/records/color"
+       {:get (partial #'p/handle-get-records sorts/sort->color-asc-last-name-asc)}]
+       ["/records/birthdate"
+        {:get (partial #'p/handle-get-records sorts/sort->birth-date-asc)}]
+      ["/records/name"
+       {:get (partial #'p/handle-get-records sorts/sort->last-name-desc)}]]])
    (ring/create-default-handler)))
